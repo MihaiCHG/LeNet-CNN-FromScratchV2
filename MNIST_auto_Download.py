@@ -22,7 +22,11 @@ def download(url, dest=None):
     """ 
     Download and save a file specified by url to dest directory,
     """
-    u = urllib2.urlopen(url)
+   ## u = urllib2.urlopen(url)
+
+    opener = urllib2.URLopener()
+    opener.addheader('User-Agent',
+                     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36')
 
     scheme, netloc, path, query, fragment = urlparse.urlsplit(url)
     filename = os.path.basename(path)
@@ -30,6 +34,9 @@ def download(url, dest=None):
         filename = 'downloaded.file'
     if dest:
         filename = os.path.join(dest, filename)
+
+    opener.retrieve(
+        url, f'{filename}')
 
     with open(filename, 'wb') as f:
         meta = u.info()

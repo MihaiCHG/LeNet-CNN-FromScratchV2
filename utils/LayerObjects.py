@@ -5,6 +5,12 @@ from utils.Activation_util    import activation_func
 from utils.RBF_initial_weight import rbf_init_weight
 from utils.utils_func         import *
 
+# Designate combination of kernels and feature maps of S2.
+C3_mapping = [[0,1,2],[1,2,3],[2,3,4],[3,4,5],[4,5,0],[5,0,1],\
+              [0,1,2,3],[1,2,3,4],[2,3,4,5],[3,4,5,0],[4,5,0,1],[5,0,1,2],\
+              [0,1,3,4],[1,2,4,5],[0,2,3,5],\
+              [0,1,2,3,4,5]]
+
 class ConvLayer(object):
     def __init__(self, kernel_shape, hparameters, init_mode='Gaussian_dist'):
         """
