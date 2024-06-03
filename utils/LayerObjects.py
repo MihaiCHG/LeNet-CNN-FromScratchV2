@@ -248,6 +248,14 @@ class RBFLayer(object):
             class_pred = np.argmin(rbf_class, axis=1) # (n_m,)
             error01 = np.sum(label != class_pred)
             return error01, class_pred
+        if mode == 'test_single':
+            # (n_m,1,84) - n_m*[(10,84)] = (n_m,10,84)
+            subtract_weight = (input_array[:,np.newaxis,:] - np.array([self.weight]*input_array.shape[0])) # (n_m,10,84)
+            rbf_class = np.sum(np.power(subtract_weight,2), axis=2) # (n_m, 10)
+            error_norm = rbf_class/(np.sum(rbf_class, axis=1))
+            class_pred = np.argmin(rbf_class, axis=1) # (n_m,)
+            probability = 1-error_norm[0][class_pred[0]]
+            return probability, class_pred
         
     def back_prop(self):
         dy_predict = -self.weight_label + self.input_array    #(n_m, 84)
