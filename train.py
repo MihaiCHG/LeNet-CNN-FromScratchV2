@@ -110,17 +110,17 @@ for epoch in range(0, epoches):
 err_rate_list = np.array(err_rate_list).T
 print("Total time used: ", time.time() - st, "sec")
 
-# This shows the error rate of training and testing data after each epoch
-x = np.arange(epoches)
-plt.xlabel('epoches')
-plt.ylabel('error rate')
-plt.plot(x, err_rate_list[0])
-plt.plot(x, err_rate_list[1])
-plt.legend(['training data', 'testing data'], loc='upper right')
-plt.show()
+# # This shows the error rate of training and testing data after each epoch
+# x = np.arange(epoches)
+# plt.xlabel('epoches')
+# plt.ylabel('error rate')
+# plt.plot(x, err_rate_list[0])
+# plt.plot(x, err_rate_list[1])
+# plt.legend(['training data', 'testing data'], loc='upper right')
+# plt.show()
 
 # read model
-with open('model_data_13.pkl', 'rb') as input_:
+with open('model_data_19.pkl', 'rb') as input_:
     ConvNet = pickle.load(input_)
 
 test_image_normalized_pad = normalize(zero_pad(test_image[:,:,:,np.newaxis], 2), 'lenet5')

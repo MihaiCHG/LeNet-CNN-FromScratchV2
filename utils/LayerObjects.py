@@ -279,11 +279,11 @@ class LeNet5(object):
         
         self.C1 = ConvLayer(kernel_shape["C1"], hparameters_convlayer)
         self.a1 = Activation("LeNet5_squash")
-        self.S2 = PoolingLayer(hparameters_pooling, "average")
+        #self.S2 = PoolingLayer(hparameters_pooling, "average")
         
         self.C3 = ConvLayer_maps(kernel_shape["C3"], hparameters_convlayer, C3_mapping)
         self.a2 = Activation("LeNet5_squash")
-        self.S4 = PoolingLayer(hparameters_pooling, "average")
+        #self.S4 = PoolingLayer(hparameters_pooling, "average")
         
         self.C5 = ConvLayer(kernel_shape["C5"], hparameters_convlayer)
         self.a3 = Activation("LeNet5_squash")
@@ -298,18 +298,21 @@ class LeNet5(object):
         self.label = input_label
         self.C1_FP = self.C1.foward_prop(input_image)
         self.a1_FP = self.a1.foward_prop(self.C1_FP)
-        self.S2_FP = self.S2.foward_prop(self.a1_FP)
+        #self.S2_FP = self.S2.foward_prop(self.a1_FP)
 
-        self.C3_FP = self.C3.foward_prop(self.S2_FP)
+        #self.C3_FP = self.C3.foward_prop(self.S2_FP)
+        self.C3_FP = self.C3.foward_prop(self.a1_FP)
         self.a2_FP = self.a2.foward_prop(self.C3_FP)
-        self.S4_FP = self.S4.foward_prop(self.a2_FP)
+        #self.S4_FP = self.S4.foward_prop(self.a2_FP)
 
-        self.C5_FP = self.C5.foward_prop(self.S4_FP)
+        #self.C5_FP = self.C5.foward_prop(self.S4_FP)
+        self.C5_FP = self.C5.foward_prop(self.a2_FP)
         self.a3_FP = self.a3.foward_prop(self.C5_FP)
 
         self.flatten = self.a3_FP[:,0,0,:]
         self.F6_FP = self.F6.foward_prop(self.flatten)
-        self.a4_FP = self.a4.foward_prop(self.F6_FP)  
+        #self.F6_FP = self.F6.foward_prop(self.a3_FP)
+        self.a4_FP = self.a4.foward_prop(self.F6_FP)
         
         # output sum of the loss over mini-batch when mode = 'train'
         # output class when mode = 'test'
@@ -324,15 +327,18 @@ class LeNet5(object):
         F6_BP = self.F6.back_prop(dy_pred, momentum, weight_decay)
         reverse_flatten = F6_BP[:,np.newaxis,np.newaxis,:]
         
-        reverse_flatten = self.a3.back_prop(reverse_flatten) 
+        reverse_flatten = self.a3.back_prop(reverse_flatten)
+        #A3_BP = self.a3.back_prop(F6_BP)
         C5_BP = self.C5.back_prop(reverse_flatten, momentum, weight_decay)
         
-        S4_BP = self.S4.back_prop(C5_BP)
-        S4_BP = self.a2.back_prop(S4_BP)
-        C3_BP = self.C3.back_prop(S4_BP, momentum, weight_decay) 
+        #S4_BP = self.S4.back_prop(C5_BP)
+        #S4_BP = self.a2.back_prop(S4_BP)
+        S4_BP = self.a2.back_prop(C5_BP)
+        C3_BP = self.C3.back_prop(S4_BP, momentum, weight_decay)
         
-        S2_BP = self.S2.back_prop(C3_BP)
-        S2_BP = self.a1.back_prop(S2_BP)  
+        #S2_BP = self.S2.back_prop(C3_BP)
+        #S2_BP = self.a1.back_prop(S2_BP)
+        S2_BP = self.a1.back_prop(C3_BP)
         C1_BP = self.C1.back_prop(S2_BP, momentum, weight_decay)
         
     # Stochastic Diagonal Levenberg-Marquaedt method for determining the learning rate 
@@ -346,10 +352,12 @@ class LeNet5(object):
         reverse_flatten = self.a3.SDLM(reverse_flatten) 
         C5_SDLM = self.C5.SDLM(reverse_flatten, mu, lr_global)
         
-        S4_SDLM = self.S4.SDLM(C5_SDLM)
-        S4_SDLM = self.a2.SDLM(S4_SDLM)
+        #S4_SDLM = self.S4.SDLM(C5_SDLM)
+        #S4_SDLM = self.a2.SDLM(S4_SDLM)
+        S4_SDLM = self.a2.SDLM(C5_SDLM)
         C3_SDLM = self.C3.SDLM(S4_SDLM, mu, lr_global)
         
-        S2_SDLM = self.S2.SDLM(C3_SDLM)
-        S2_SDLM = self.a1.SDLM(S2_SDLM)  
+        #S2_SDLM = self.S2.SDLM(C3_SDLM)
+        #S2_SDLM = self.a1.SDLM(S2_SDLM)
+        S2_SDLM = self.a1.SDLM(C3_SDLM)
         C1_SDLM = self.C1.SDLM(S2_SDLM, mu, lr_global)
