@@ -271,7 +271,7 @@ class LeNet5(object):
         kernel_shape = {"C1": (5,5,1,6),
                         "C3": (5,5,6,16),    ### C3 has designated combinations
                         "C5": (5,5,16,120),  ### It's actually a FC layer
-                        "F6": (120,84),
+                        "F6": (48000,84),
                         "OUTPUT": (84,10)}
         
         hparameters_convlayer = {"stride": 1, "pad": 0}
@@ -309,7 +309,8 @@ class LeNet5(object):
         self.C5_FP = self.C5.foward_prop(self.a2_FP)
         self.a3_FP = self.a3.foward_prop(self.C5_FP)
 
-        self.flatten = self.a3_FP[:,0,0,:]
+        #self.flatten = self.a3_FP[:,0,0,:]
+        self.flatten = self.a3_FP.reshape(len(self.label), 48000)
         self.F6_FP = self.F6.foward_prop(self.flatten)
         #self.F6_FP = self.F6.foward_prop(self.a3_FP)
         self.a4_FP = self.a4.foward_prop(self.F6_FP)
@@ -325,8 +326,9 @@ class LeNet5(object):
         
         dy_pred = self.a4.back_prop(dy_pred)
         F6_BP = self.F6.back_prop(dy_pred, momentum, weight_decay)
-        reverse_flatten = F6_BP[:,np.newaxis,np.newaxis,:]
-        
+        #reverse_flatten = F6_BP[:,np.newaxis,np.newaxis,:]
+        reverse_flatten = F6_BP.reshape(F6_BP.shape[0], 20, 20, 120)
+
         reverse_flatten = self.a3.back_prop(reverse_flatten)
         #A3_BP = self.a3.back_prop(F6_BP)
         C5_BP = self.C5.back_prop(reverse_flatten, momentum, weight_decay)
