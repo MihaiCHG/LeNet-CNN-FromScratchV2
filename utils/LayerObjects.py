@@ -271,7 +271,8 @@ class LeNet5(object):
         kernel_shape = {"C1": (5,5,1,6),
                         "C3": (5,5,6,16),    ### C3 has designated combinations
                         "C5": (5,5,16,120),  ### It's actually a FC layer
-                        "F6": (48000,84),
+                        "F6": (48000,120),
+                        "F7": (120, 84),
                         "OUTPUT": (84,10)}
         
         hparameters_convlayer = {"stride": 1, "pad": 0}
@@ -290,7 +291,10 @@ class LeNet5(object):
 
         self.F6 = FCLayer(kernel_shape["F6"])
         self.a4 = Activation("LeNet5_squash")
-        
+
+        self.F7 = FCLayer(kernel_shape["F7"])
+        self.a5 = Activation("LeNet5_squash")
+
         #self.Output = RBFLayer(kernel_shape["OUTPUT"], bitmap)
         self.Output = RBFLayer(bitmap)
         
@@ -314,17 +318,23 @@ class LeNet5(object):
         self.F6_FP = self.F6.foward_prop(self.flatten)
         #self.F6_FP = self.F6.foward_prop(self.a3_FP)
         self.a4_FP = self.a4.foward_prop(self.F6_FP)
+
+        self.F7_FP = self.F7.foward_prop(self.a4_FP)
+        self.a5_FP = self.a5.foward_prop(self.F7_FP)
         
         # output sum of the loss over mini-batch when mode = 'train'
         # output class when mode = 'test'
-        out  = self.Output.foward_prop(self.a4_FP, input_label, mode) 
+        out  = self.Output.foward_prop(self.a5_FP, input_label, mode)
 
         return out 
         
     def Back_Propagation(self, momentum, weight_decay):
         dy_pred = self.Output.back_prop()
-        
-        dy_pred = self.a4.back_prop(dy_pred)
+
+        dy_pred = self.a5.back_prop(dy_pred)
+        F7_BP = self.F7.back_prop(dy_pred, momentum, weight_decay)
+
+        dy_pred = self.a4.back_prop(F7_BP)
         F6_BP = self.F6.back_prop(dy_pred, momentum, weight_decay)
         #reverse_flatten = F6_BP[:,np.newaxis,np.newaxis,:]
         reverse_flatten = F6_BP.reshape(F6_BP.shape[0], 20, 20, 120)
@@ -346,11 +356,15 @@ class LeNet5(object):
     # Stochastic Diagonal Levenberg-Marquaedt method for determining the learning rate 
     def SDLM(self, mu, lr_global):
         d2y_pred = self.Output.SDLM()
-        d2y_pred = self.a4.SDLM(d2y_pred)
-        
+
+        d2y_pred = self.a5.SDLM(d2y_pred)
+        F7_SDLM = self.F7.SDLM(d2y_pred, mu, lr_global)
+
+        d2y_pred = self.a4.SDLM(F7_SDLM)
         F6_SDLM = self.F6.SDLM(d2y_pred, mu, lr_global)
-        reverse_flatten = F6_SDLM[:,np.newaxis,np.newaxis,:]
-        
+        #reverse_flatten = F6_SDLM[:,np.newaxis,np.newaxis,:]
+        reverse_flatten = F6_SDLM.reshape(F6_SDLM.shape[0], 20, 20, 120)
+
         reverse_flatten = self.a3.SDLM(reverse_flatten) 
         C5_SDLM = self.C5.SDLM(reverse_flatten, mu, lr_global)
         
