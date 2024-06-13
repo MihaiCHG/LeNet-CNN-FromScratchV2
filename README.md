@@ -1,3 +1,20 @@
+# How to use it
+Firstly, you have to clone the git repository, we have three branches:
+- master (contains the network with all LeNet arhitecture - the pretrained weights are <a href="https://drive.google.com/file/d/10sX0-S1SCHOOTSHA4Mwy9sLDZiPouFDo/view?usp=drive_link">here</a> 98,6% accuracy);
+- withoutPooling (contains the network without the pooling layers - - the pretrained weights are <a href="https://drive.google.com/file/d/1zowFWkbn7VtqgdD5PTA_fFB_nU_6V2Db/view?usp=drive_link">here</a> 55% accuracy);
+- withoutPoolingWithAdditionLayer (contains the network without the pooling layers and with an additional fully connected layer - the pretrained weights are <a href="https://drive.google.com/file/d/1YbcOzI-JLAOr0rpUuSuTFJ11YuIOtyuu/view?usp=drive_link">here</a> 94% accuracy).
+
+Secondly, you have to install the needed modules. For this, you need to use a virtual environment (can use conda, or venv from pycharm for this).</br>
+Follow the next steps:
+- Connect to the virtual environment, for pycharm run in terminal './venv/Scripts/activate';
+- You should have python >= 3.9, use pip to install the required modules by running this command: 'pip install -r requirements.txt';
+- to run the train phase (adjust the number of epoches, iteration an other parameters):
+<code>python train.py</code>
+- to run the test phase (adjust the file with the pretrained weights, line 39 from test.py):
+<code>python test.py</code>
+- We have somthing live, we can use the flask server to run the network on something drawn by us
+<code>python app.py</code> (change the .pkl file from line 27 with the correct file which contains the pretrained weights).
+
 # LeNet5 Implementation FROM SCRATCH
 This is an implementation of LeNet5 from [Yann LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf) in 1998, using Numpy & OOP only (without any auto-differentiate tools or deep learning frameworks).
 
