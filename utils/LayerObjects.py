@@ -349,7 +349,7 @@ class LeNet5(object):
         d2y_pred = self.a4.SDLM(d2y_pred)
         
         F6_SDLM = self.F6.SDLM(d2y_pred, mu, lr_global)
-        reverse_flatten = F6_SDLM[:,np.newaxis,np.newaxis,:]
+        reverse_flatten = F6_SDLM.reshape(F6_SDLM.shape[0], 20, 20, 120)
         
         reverse_flatten = self.a3.SDLM(reverse_flatten) 
         C5_SDLM = self.C5.SDLM(reverse_flatten, mu, lr_global)
