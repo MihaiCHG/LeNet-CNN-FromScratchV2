@@ -27,11 +27,11 @@ print("The shape of testing image with padding: ", test_image_normalized_pad.sha
 
 # The fixed weight (7x12 preset ASCII bitmaps) used in the RBF layer.
 bitmap = rbf_init_weight()
-fig, axarr = plt.subplots(2,5,figsize=(20,8))
-for i in range(10):
-    x,y = int(i/5), i%5
-    axarr[x,y].set_title(str(i))
-    axarr[x,y].imshow(bitmap[i,:].reshape(12,7), cmap=mpl.cm.Greys)
+# fig, axarr = plt.subplots(2,5,figsize=(20,8))
+# for i in range(10):
+#     x,y = int(i/5), i%5
+#     axarr[x,y].set_title(str(i))
+#     axarr[x,y].imshow(bitmap[i,:].reshape(12,7), cmap=mpl.cm.Greys)
 
 
 ConvNet = LeNet5()
