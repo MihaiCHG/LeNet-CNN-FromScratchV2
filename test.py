@@ -36,7 +36,7 @@ bitmap = rbf_init_weight()
 
 ConvNet = LeNet5()
 
-with open('model_data_19.pkl', 'rb') as input_:
+with open('withoutPoolingWithAdditionalLayerEpochs6.pkl', 'rb') as input_:
     ConvNet = pickle.load(input_)
 
 error01, class_pred = ConvNet.Forward_Propagation(test_image_normalized_pad, test_label, 'test')

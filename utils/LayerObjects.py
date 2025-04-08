@@ -279,21 +279,21 @@ class LeNet5(object):
         hparameters_pooling   = {"stride": 2, "f": 2}        
         
         self.C1 = ConvLayer(kernel_shape["C1"], hparameters_convlayer)
-        self.a1 = Activation("LeNet5_squash")
+        self.a1 = Activation("LeNet5_squash_FHE")
         #self.S2 = PoolingLayer(hparameters_pooling, "average")
         
         self.C3 = ConvLayer_maps(kernel_shape["C3"], hparameters_convlayer, C3_mapping)
-        self.a2 = Activation("LeNet5_squash")
+        self.a2 = Activation("LeNet5_squash_FHE")
         #self.S4 = PoolingLayer(hparameters_pooling, "average")
         
         self.C5 = ConvLayer(kernel_shape["C5"], hparameters_convlayer)
-        self.a3 = Activation("LeNet5_squash")
+        self.a3 = Activation("LeNet5_squash_FHE")
 
         self.F6 = FCLayer(kernel_shape["F6"])
-        self.a4 = Activation("LeNet5_squash")
+        self.a4 = Activation("LeNet5_squash_FHE")
 
         self.F7 = FCLayer(kernel_shape["F7"])
-        self.a5 = Activation("LeNet5_squash")
+        self.a5 = Activation("LeNet5_squash_FHE")
 
         #self.Output = RBFLayer(kernel_shape["OUTPUT"], bitmap)
         self.Output = RBFLayer(bitmap)

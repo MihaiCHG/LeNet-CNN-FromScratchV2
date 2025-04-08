@@ -2,6 +2,13 @@
 import numpy as np
 
 #Squashing function used in LeNet-5
+
+def LeNet5_squash_FHE(x):
+    return 1.7159*tan_Taylor((2/3)*x)
+
+def tan_Taylor(x):
+    return x+ (1/3)*x*x*x + (2/15)*x*x*x*x*x
+
 def LeNet5_squash(x):
     return 1.7159*np.tanh(2*x/3)
 def d_LeNet5_squash(x):
@@ -51,7 +58,7 @@ def d2_ELU(x, a=alpha["elu"]):
     return np.where(x > 0, 0, ELU(x, a)+a)
 
 def activation_func():
-    actf = [LeNet5_squash, sigmoid, tanh, ReLU, PReLU, ELU]
+    actf = [LeNet5_squash_FHE, LeNet5_squash, sigmoid, tanh, ReLU, PReLU, ELU]
     actfName = [act.__name__ for act in actf]
     d_actf = [d_LeNet5_squash, d_sigmoid, d_tanh, d_ReLU, d_PReLU, d_ELU]
     d_actfName = [d_act.__name__ for d_act in d_actf]
